@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using PLL.Models;
 using System.Diagnostics;
 using MongoDB.Bson;
@@ -14,6 +15,8 @@ using PLL.Data.Infastracture;
 
 namespace PLL.Controllers
 {
+    [Route("")]
+    [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -24,50 +27,17 @@ namespace PLL.Controllers
             _logger = logger;
             _accessor = accessor;
         }
+        //[HttpGet("test")]
+        //public async Task<ActionResult> Test()
+        //{
 
-        public async Task<ActionResult> Test()
-        {
-            //var client = new MongoClient("mongodb://localhost:27017");
-
-            //var db = client.GetDatabase("TrainingSchedule");
-
-            //var collection = db.GetCollection<BsonDocument>("Set");
-
-            //var docs = collection.Find(new BsonDocument()).ToList();
-
-            //var set = new Set();
-
-            //foreach (var doc in docs)
-            //{
-            //    set = new Set
-            //    {
-            //        Id = doc["_id"].AsObjectId.ToString(),
-            //        NumberRepetitons = doc["number_repetitions"].AsInt32,
-            //        ExerciseId = doc["exercise_id"].AsObjectId.ToString(),
-            //        Weight = doc["weight"].AsInt32,
-            //        Unit = new Unit
-            //        {
-            //            UnitName = doc["unit"].AsString
-            //        }
-            //    };
-            //}
-
-            var dao = new TrainingDao(_logger);
-
-            var entity = await dao.GetByIdAsync("6557650ef425a75f5f410183");
-
-            entity.Date = DateTime.Today.AddYears(1);
-
-            await dao.UpdateAsync(entity);
-
-            return Json("gay");
-        }
+        //}
 
         //public async Task<ActionResult> CheckConStatus()
         //{
 
         //}
-
+        [HttpGet("")]
         public IActionResult Index()
         {
             return View();
