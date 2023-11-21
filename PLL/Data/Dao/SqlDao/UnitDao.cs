@@ -27,9 +27,9 @@ namespace PLL.Data.Dao.SqlDao
                 .Build();
         }
 
-        protected override SqlCommand ToSqlRequest(Unit entity)
+        protected override SqlCommand ToSqlRequest(Unit entity, string request)
         {
-            var command = new SqlCommand(InsertRequest, _connection);
+            var command = new SqlCommand(request, _connection);
 
             command.Parameters.AddWithValue("@UnitName", entity.UnitName);
 

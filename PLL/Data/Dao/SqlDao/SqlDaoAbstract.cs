@@ -75,7 +75,7 @@ namespace PLL.Data.Dao.SqlDao
 
         public Task CreateAsync(TEntity entity)
         {
-            var command = ToSqlRequest(entity);
+            var command = ToSqlRequest(entity,InsertRequest);
 
             _logger.LogInformation("Executing Sql-Query: {0}", command.CommandText);
 
@@ -86,7 +86,7 @@ namespace PLL.Data.Dao.SqlDao
 
         public Task UpdateAsync(TEntity entity)
         {
-            var command = ToSqlRequest(entity);
+            var command = ToSqlRequest(entity,UpdateRequest);
 
             command.Parameters.AddWithValue("@Id", entity.Id);
 
@@ -111,6 +111,6 @@ namespace PLL.Data.Dao.SqlDao
         }
 
         protected abstract TEntity MapDataReaderToEntity(SqlDataReader reader);
-        protected abstract SqlCommand ToSqlRequest(TEntity entity);
+        protected abstract SqlCommand ToSqlRequest(TEntity entity,string request);
     }
 }

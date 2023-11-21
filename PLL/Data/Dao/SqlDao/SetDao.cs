@@ -37,9 +37,9 @@ namespace PLL.Data.Dao.SqlDao
                 .Build();
         }
 
-        protected override SqlCommand ToSqlRequest(Set entity)
+        protected override SqlCommand ToSqlRequest(Set entity, string request)
         {
-            var command = new SqlCommand(InsertRequest, _connection);
+            var command = new SqlCommand(request, _connection);
 
             command.Parameters.AddWithValue("@NumberRepetition", entity.NumberRepetitons);
             command.Parameters.AddWithValue("@Weight", entity.Weight);

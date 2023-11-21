@@ -38,9 +38,9 @@ namespace PLL.Data.Dao.SqlDao
                 .Build();
         }
 
-        protected override SqlCommand ToSqlRequest(Exercise entity)
+        protected override SqlCommand ToSqlRequest(Exercise entity,string request)
         {
-            var command = new SqlCommand(InsertRequest, _connection);
+            var command = new SqlCommand(request, _connection);
 
             command.Parameters.AddWithValue("@ExerciseName", entity.ExerciseName);
             command.Parameters.AddWithValue("@MuscleGroupId", entity.MuscleGroupId);

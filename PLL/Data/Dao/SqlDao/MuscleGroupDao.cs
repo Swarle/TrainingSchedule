@@ -29,9 +29,9 @@ namespace PLL.Data.Dao.SqlDao
                 .Build();
         }
 
-        protected override SqlCommand ToSqlRequest(MuscleGroup entity)
+        protected override SqlCommand ToSqlRequest(MuscleGroup entity, string request)
         {
-            var command = new SqlCommand(InsertRequest, _connection);
+            var command = new SqlCommand(request, _connection);
 
             command.Parameters.AddWithValue("@GroupName", entity.GroupName);
 
