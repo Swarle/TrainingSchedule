@@ -4,6 +4,6 @@
     {
         public string Id { get; set; }
         public DateTime Date { get; set; }
-        public List<MuscleGroup> MuscleGroups { get; set; } = new List<MuscleGroup>();
+        public List<MuscleGroup>? MuscleGroups { get; set; } = new List<MuscleGroup>();
     }
 }

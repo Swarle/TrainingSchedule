@@ -1,4 +1,6 @@
-﻿namespace PLL.Data.Entity
+﻿using Newtonsoft.Json;
+
+namespace PLL.Data.Entity
 {
     public class Exercise : IEntity
     {
