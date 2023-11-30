@@ -19,6 +19,8 @@ namespace PLL
                 return factory.GetAccessor();
             });
 
+            builder.Services.AddSession();
+
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
@@ -37,6 +39,8 @@ namespace PLL
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+
+            app.UseSession();
 
 
             app.UseAuthorization();

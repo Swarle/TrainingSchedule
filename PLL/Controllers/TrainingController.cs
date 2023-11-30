@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using PLL.Data.Dao.Interfaces;
 using PLL.Data.Entity;
 
@@ -14,44 +15,97 @@ namespace PLL.Controllers
             _accessor = accessor;
         }
 
-        [HttpGet("get-trainings")]
-        public async Task<ActionResult> GetAllAsync()
+        [HttpGet("overview-training")]
+        public IActionResult OverviewTraining()
         {
-            var entityList = await _accessor.TrainingDao.GetAllAsync();
+            Training training;
 
-            return Json(entityList);
+            if (HttpContext.Session.Keys.Contains("training"))
+            {
+                training = JsonConvert.DeserializeObject<Training>(HttpContext.Session.GetString("training"));
+            }
+            else
+            {
+                training = new Training
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Date = DateTime.Now
+                };
+            }
+            
+            var jsonTraining = JsonConvert.SerializeObject(training);
+
+            HttpContext.Session.SetString("training",jsonTraining);
+
+            return View(training);
         }
 
-        [HttpGet("get-training/{id:Guid}")]
-        public async Task<ActionResult> GetByIdAsync(Guid id)
+        [HttpPost("add-muscle-group")]
+        public IActionResult AddMuscleGroup([FromForm] string muscleGroupName)
         {
-            var entity = await _accessor.TrainingDao.GetByIdAsync(id.ToString());
+            var trainingString = HttpContext.Session.GetString("training");
 
-            return Json(entity);
+            var training = JsonConvert.DeserializeObject<Training>(trainingString);
+
+            training.MuscleGroups.Add(new MuscleGroup
+            {
+                Id = Guid.NewGuid().ToString(),
+                GroupName = muscleGroupName
+            });
+
+            HttpContext.Session.SetString("training",JsonConvert.SerializeObject(training));
+
+            return RedirectToAction("OverviewTraining","Training");
         }
 
-        [HttpPost("create-training")]
-        public async Task<ActionResult> CreateTrainingAsync([FromBody] Training training)
+        [HttpPost("add-exercise")]
+        public IActionResult AddExercise([FromForm] string exerciseName, [FromForm] string muscleGroupId)
         {
-            await _accessor.TrainingDao.CreateAsync(training);
+            var trainingString = HttpContext.Session.GetString("training");
 
-            return Ok();
+            var training = JsonConvert.DeserializeObject<Training>(trainingString);
+
+            training.MuscleGroups.Where(e => e.Id == muscleGroupId).FirstOrDefault().Exercises.Add(new Exercise
+            {
+                Id = Guid.NewGuid().ToString(),
+                ExerciseName = exerciseName,
+                MuscleGroupId = muscleGroupId
+            });
+
+            HttpContext.Session.SetString("training",JsonConvert.SerializeObject(training));
+
+            return RedirectToAction("OverviewTraining", "Training");
         }
 
-        [HttpPost("update-training")]
-        public async Task<ActionResult> UpdateTrainingAsync([FromBody] Training training)
+        [HttpPost("add-set")]
+        public IActionResult AddSet([FromForm] string exerciseId, [FromForm] int numberRepetition,
+            [FromForm] int weight, [FromForm] string unitName, [FromForm] string muscleGroupId)
         {
-            await _accessor.TrainingDao.UpdateAsync(training);
+            var trainingString = HttpContext.Session.GetString("training");
 
-            return Ok();
-        }
+            var training = JsonConvert.DeserializeObject<Training>(trainingString);
 
-        [HttpPost("delete-training/{id:Guid}")]
-        public async Task<ActionResult> DeleteTrainingAsync(Guid id)
-        {
-            await _accessor.TrainingDao.DeleteAsync(id.ToString());
+            var muscleGroup = training.MuscleGroups.Where(e => e.Id == muscleGroupId).FirstOrDefault();
 
-            return Ok();
+            var exercise = muscleGroup.Exercises.Where(e => e.Id == exerciseId).FirstOrDefault();
+
+            exercise.Sets.Add(new Set
+            {
+                Id = Guid.NewGuid().ToString(),
+                ExerciseId = exerciseId,
+                NumberRepetitons = numberRepetition,
+                Weight = weight,
+                Unit = new Unit
+                {
+                    Id = new Guid().ToString(),
+                    UnitName = unitName
+                }
+
+            });
+
+            HttpContext.Session.SetString("training", JsonConvert.SerializeObject(training));
+
+            return RedirectToAction("OverviewTraining", "Training");
         }
     }
 }

@@ -8,7 +8,7 @@ namespace PLL.Data.Entity
         public string ExerciseName { get; set; }
         public string MuscleGroupId { get; set; }
         public MuscleGroup MuscleGroup { get; set; }
-        public List<Set> Sets { get; set; }
+        public List<Set> Sets { get; set; } = new List<Set>();
 
     }
 }
