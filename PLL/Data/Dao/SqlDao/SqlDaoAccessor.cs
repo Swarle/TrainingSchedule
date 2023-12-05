@@ -1,5 +1,6 @@
 ﻿using PLL.Data.Dao.Interfaces;
 using PLL.Data.Entity;
+using PLL.Data.Observer.Interfaces;
 
 namespace PLL.Data.Dao.SqlDao
 {
@@ -11,11 +12,14 @@ namespace PLL.Data.Dao.SqlDao
         private IDao<Set>? _setDao;
         private IDao<Unit>? _unitDao;
 
+        private readonly IObserver _observer;
+
         private readonly ILoggerFactory _loggerFactory;
 
-        public SqlDaoAccessor(ILoggerFactory loggerFactory)
+        public SqlDaoAccessor(ILoggerFactory loggerFactory, IObserver observer)
         {
             _loggerFactory = loggerFactory;
+            _observer = observer;
         }
 
         public IDao<Training> TrainingDao
@@ -23,7 +27,13 @@ namespace PLL.Data.Dao.SqlDao
             get
             {
                 if (_trainingDao == null)
+                {
                     _trainingDao = new TrainingDao(_loggerFactory.CreateLogger<TrainingDao>());
+
+                    var subjectTraining = _trainingDao as ISubject;
+
+                    subjectTraining.Attach(_observer);
+                }
 
                 return _trainingDao;
             }

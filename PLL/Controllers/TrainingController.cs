@@ -53,6 +53,9 @@ namespace PLL.Controllers
                 GroupName = muscleGroupName
             });
 
+            var trainings = _accessor.TrainingDao.GetAllAsync().Result;
+
+
             HttpContext.Session.SetString("training",JsonConvert.SerializeObject(training));
 
             return RedirectToAction("OverviewTraining","Training");
