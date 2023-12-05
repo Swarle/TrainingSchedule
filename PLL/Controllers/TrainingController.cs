@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using PLL.Data.Dao.Interfaces;
 using PLL.Data.Entity;
+using PLL.Data.Memento;
 
 namespace PLL.Controllers
 {
@@ -18,11 +19,14 @@ namespace PLL.Controllers
         [HttpGet("overview-training")]
         public IActionResult OverviewTraining()
         {
+            Caretaker caretaker;
             Training training;
 
-            if (HttpContext.Session.Keys.Contains("training"))
+            if (HttpContext.Session.Keys.Contains("caretaker"))
             {
-                training = JsonConvert.DeserializeObject<Training>(HttpContext.Session.GetString("training"));
+                caretaker = JsonConvert.DeserializeObject<Caretaker>(HttpContext.Session.GetString("caretaker"));
+
+                training = caretaker.GetLast();
             }
             else
             {
@@ -31,11 +35,15 @@ namespace PLL.Controllers
                     Id = Guid.NewGuid().ToString(),
                     Date = DateTime.Now
                 };
+
+                caretaker = new Caretaker(training);
+
             }
             
-            var jsonTraining = JsonConvert.SerializeObject(training);
 
-            HttpContext.Session.SetString("training",jsonTraining);
+            var jsonCaretaker = JsonConvert.SerializeObject(caretaker);
+
+            HttpContext.Session.SetString("caretaker", jsonCaretaker);
 
             return View(training);
         }
@@ -43,9 +51,13 @@ namespace PLL.Controllers
         [HttpPost("add-muscle-group")]
         public IActionResult AddMuscleGroup([FromForm] string muscleGroupName)
         {
-            var trainingString = HttpContext.Session.GetString("training");
+            var caretakerString = HttpContext.Session.GetString("caretaker");
 
-            var training = JsonConvert.DeserializeObject<Training>(trainingString);
+            var caretaker = JsonConvert.DeserializeObject<Caretaker>(caretakerString);
+
+            var training = caretaker.GetLast();
+
+            caretaker.Backup();
 
             training.MuscleGroups.Add(new MuscleGroup
             {
@@ -53,10 +65,9 @@ namespace PLL.Controllers
                 GroupName = muscleGroupName
             });
 
-            var trainings = _accessor.TrainingDao.GetAllAsync().Result;
+            //var trainings = _accessor.TrainingDao.GetAllAsync().Result;
 
-
-            HttpContext.Session.SetString("training",JsonConvert.SerializeObject(training));
+            HttpContext.Session.SetString("caretaker",JsonConvert.SerializeObject(caretaker));
 
             return RedirectToAction("OverviewTraining","Training");
         }
@@ -64,9 +75,13 @@ namespace PLL.Controllers
         [HttpPost("add-exercise")]
         public IActionResult AddExercise([FromForm] string exerciseName, [FromForm] string muscleGroupId)
         {
-            var trainingString = HttpContext.Session.GetString("training");
+            var caretakerString = HttpContext.Session.GetString("caretaker");
 
-            var training = JsonConvert.DeserializeObject<Training>(trainingString);
+            var caretaker = JsonConvert.DeserializeObject<Caretaker>(caretakerString);
+
+            var training = caretaker.GetLast();
+
+            caretaker.Backup();
 
             training.MuscleGroups.Where(e => e.Id == muscleGroupId).FirstOrDefault().Exercises.Add(new Exercise
             {
@@ -75,7 +90,7 @@ namespace PLL.Controllers
                 MuscleGroupId = muscleGroupId
             });
 
-            HttpContext.Session.SetString("training",JsonConvert.SerializeObject(training));
+            HttpContext.Session.SetString("caretaker",JsonConvert.SerializeObject(caretaker));
 
             return RedirectToAction("OverviewTraining", "Training");
         }
@@ -84,9 +99,13 @@ namespace PLL.Controllers
         public IActionResult AddSet([FromForm] string exerciseId, [FromForm] int numberRepetition,
             [FromForm] int weight, [FromForm] string unitName, [FromForm] string muscleGroupId)
         {
-            var trainingString = HttpContext.Session.GetString("training");
+            var caretakerString = HttpContext.Session.GetString("caretaker");
 
-            var training = JsonConvert.DeserializeObject<Training>(trainingString);
+            var caretaker = JsonConvert.DeserializeObject<Caretaker>(caretakerString);
+
+            var training = caretaker.GetLast();
+
+            caretaker.Backup();
 
             var muscleGroup = training.MuscleGroups.Where(e => e.Id == muscleGroupId).FirstOrDefault();
 
@@ -106,7 +125,21 @@ namespace PLL.Controllers
 
             });
 
-            HttpContext.Session.SetString("training", JsonConvert.SerializeObject(training));
+            HttpContext.Session.SetString("caretaker", JsonConvert.SerializeObject(caretaker));
+
+            return RedirectToAction("OverviewTraining", "Training");
+        }
+
+        [HttpPost("undo")]
+        public IActionResult Undo()
+        {
+            var caretakerString = HttpContext.Session.GetString("caretaker");
+
+            var caretaker = JsonConvert.DeserializeObject<Caretaker>(caretakerString);
+
+            var training = caretaker.Undo();
+
+            HttpContext.Session.SetString("caretaker", JsonConvert.SerializeObject(caretaker));
 
             return RedirectToAction("OverviewTraining", "Training");
         }

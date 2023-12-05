@@ -14,7 +14,7 @@
     top: 50%;
     left: 50%;
     width: 300px;
-    height: 100px;
+    min-height: 100px;
     margin: -220px 0 0 -100px;
 }
 
@@ -145,4 +145,14 @@
 
 .set_info {
     margin-left: 20px;
+}
+
+.action-button-group {
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.undo-button {
+    flex-grow: 1;
 }

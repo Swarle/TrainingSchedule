@@ -12,8 +12,8 @@ namespace PLL.Data.Dao.SqlDao
 
         protected override string SelectAllRequest => "Select * From Muscle_group";
         protected override string SelectByIdRequest => "Select * From Muscle_group Where id = @Id";
-        protected override string InsertRequest => "Insert Into Muscle_group([group_name]) Values(@GroupName)";
-        protected override string UpdateRequest => "Update Muscle_group Set [group_name] = @GroupName Where id = @Id";
+        protected override string InsertRequest => "Insert Into Muscle_group([group_name],[training_id]) Values(@GroupName,@TrainingId)";
+        protected override string UpdateRequest => "Update Muscle_group Set [group_name] = @GroupName,[training_id] = @TrainingId Where id = @Id";
         protected override string DeleteRequest => "Delete From Muscle_group Where id = @Id";
 
         public MuscleGroupDao(ILogger logger) : base(logger)
@@ -26,6 +26,7 @@ namespace PLL.Data.Dao.SqlDao
             return _builder
                 .AddId(reader.GetGuid("id").ToString())
                 .AddGroupName(reader.GetString("group_name"))
+                .AddTrainingId(reader.GetGuid("training_id").ToString())
                 .Build();
         }
 
@@ -34,6 +35,7 @@ namespace PLL.Data.Dao.SqlDao
             var command = new SqlCommand(request, _connection);
 
             command.Parameters.AddWithValue("@GroupName", entity.GroupName);
+            command.Parameters.AddWithValue("@TrainingId", entity.TrainingId);
 
             return command;
         }

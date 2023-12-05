@@ -24,12 +24,6 @@ namespace PLL.Data.Dao.SqlDao
 
         protected override Exercise MapDataReaderToEntity(SqlDataReader reader)
         {
-            //var entity = new Exercise
-            //{
-            //    Id = reader.GetGuid("id").ToString(),
-            //    ExerciseName = reader.GetString("exercise_name"),
-            //    MuscleGroupId = reader.GetGuid("muscle_group_id").ToString()
-            //};
 
             return _builder
                 .AddId(reader.GetGuid("id").ToString())

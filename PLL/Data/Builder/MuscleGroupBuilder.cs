@@ -38,7 +38,14 @@ namespace PLL.Data.Builder
 
         public MuscleGroupBuilder AddTraining(Training training)
         {
-            _muscleGroup.Trainings.Add(training);
+            _muscleGroup.Training = training;
+
+            return this;
+        }
+
+        public MuscleGroupBuilder AddTrainingId(string trainingId)
+        {
+            _muscleGroup.TrainingId = trainingId;
 
             return this;
         }
