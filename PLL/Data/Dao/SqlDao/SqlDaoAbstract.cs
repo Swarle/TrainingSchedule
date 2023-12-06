@@ -3,6 +3,7 @@ using PLL.Data.Dao.Interfaces;
 using PLL.Data.Entity;
 using PLL.Data.Infastracture;
 using PLL.Data.Observer.Interfaces;
+using PLL.Data.Specification;
 
 namespace PLL.Data.Dao.SqlDao
 {
@@ -162,6 +163,33 @@ namespace PLL.Data.Dao.SqlDao
 
         return Task.CompletedTask;
     }
+
+    public async Task<TEntity?> FindSingle(ISpecification<TEntity> specification)
+    {
+        var list = new List<TEntity>();
+
+        var command = specification.CreateCommand(_connection);
+
+        await using (var reader = await command.ExecuteReaderAsync())
+        {
+            if (reader.HasRows)
+            {
+                while (await reader.ReadAsync())
+                {
+                    list.Add(specification.MapEntity(reader));
+                }
+            }
+        }
+
+        if (list.Count > 1)
+            throw new InvalidOperationException("Очікувалася лише одна сутність, але отримано більше одного рядка.");
+
+        _state = DaoState.GetById;
+
+        Notify();
+
+        return list.FirstOrDefault();
+        }
 
     protected abstract TEntity MapDataReaderToEntity(SqlDataReader reader);
     protected abstract SqlCommand ToSqlRequest(TEntity entity, string request);

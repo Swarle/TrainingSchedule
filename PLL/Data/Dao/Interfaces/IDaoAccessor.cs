@@ -10,5 +10,7 @@ namespace PLL.Data.Dao.Interfaces
         IDao<MuscleGroup> MuscleGroupDao { get; }
         IDao<Set> SetDao { get; }
         IDao<Unit> UnitDao { get; }
+        IDao<User> UserDao { get;}
+        IDao<Role> RoleDao { get; }
     }
 }

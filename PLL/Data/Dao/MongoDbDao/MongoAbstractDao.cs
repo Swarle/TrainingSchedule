@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using PLL.Data.Dao.Interfaces;
 using PLL.Data.Entity;
 using PLL.Data.Infastracture;
+using PLL.Data.Specification;
 
 namespace PLL.Data.Dao.MongoDbDao
 {
@@ -57,6 +58,11 @@ namespace PLL.Data.Dao.MongoDbDao
         public async Task DeleteAsync(string id)
         {
             await _collection.DeleteOneAsync(new BsonDocument{{"_id",new ObjectId(id)}});
+        }
+
+        public Task<TEntity?> FindSingle(ISpecification<TEntity> specification)
+        {
+            throw new NotImplementedException();
         }
 
         protected abstract List<TEntity> MapFromBsonToEntities(List<BsonDocument> bsonList);

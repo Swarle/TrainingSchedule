@@ -1,4 +1,5 @@
 ﻿using PLL.Data.Entity;
+using PLL.Data.Specification;
 
 namespace PLL.Data.Dao.Interfaces
 {
@@ -9,5 +10,6 @@ namespace PLL.Data.Dao.Interfaces
         Task CreateAsync(TEntity entity);
         Task UpdateAsync(TEntity entity);
         Task DeleteAsync(string id);
+        Task<TEntity?> FindSingle(ISpecification<TEntity> specification);
     }
 }

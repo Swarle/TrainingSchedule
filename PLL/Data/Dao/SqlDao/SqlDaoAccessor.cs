@@ -11,6 +11,8 @@ namespace PLL.Data.Dao.SqlDao
         private IDao<MuscleGroup>? _muscleGroupDao;
         private IDao<Set>? _setDao;
         private IDao<Unit>? _unitDao;
+        private IDao<Role>? _roleDao;
+        private IDao<User>? _userDao;
 
         private readonly IObserver _observer;
 
@@ -83,6 +85,26 @@ namespace PLL.Data.Dao.SqlDao
             }
         }
 
+        public IDao<User> UserDao
+        {
+            get
+            {
+                if (_userDao == null)
+                    return _userDao = new UserDao(_loggerFactory.CreateLogger<UserDao>());
 
+                return _userDao;
+            }
+        }
+
+        public IDao<Role> RoleDao
+        {
+            get
+            {
+                if (_roleDao == null)
+                    return _roleDao = new RoleDao(_loggerFactory.CreateLogger<RoleDao>());
+
+                return _roleDao;
+            }
+        }
     }
 }

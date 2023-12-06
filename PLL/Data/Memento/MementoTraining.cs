@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PLL.Data.Entity;
+using Newtonsoft.Json;
 using PLL.Data.Memento.Interfaces;
 
 namespace PLL.Data.Memento
@@ -20,11 +21,16 @@ namespace PLL.Data.Memento
         {
             Id = Guid.NewGuid();
             DateTime = DateTime.Now;
+
+            var muscleGroupsJson = JsonConvert.SerializeObject(muscleGroups);
+
+            var muscleGroupsList = JsonConvert.DeserializeObject<List<MuscleGroup>>(muscleGroupsJson);
+
             _entity = new Training
             {
                 Id = id,
                 Date = date,
-                MuscleGroups = muscleGroups.ToList()
+                MuscleGroups = muscleGroupsList
             };
         }
 
