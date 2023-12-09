@@ -14,7 +14,7 @@ namespace PLL.Data.Dao.DaoFactory
 
         public override IDaoAccessor GetAccessor()
         {
-            return new SqlDaoAccessor(_loggerFactory,_observer);
+            return new SqlDaoAccessor(_loggerFactory);
         }
     }
 }

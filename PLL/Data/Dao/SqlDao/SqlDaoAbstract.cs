@@ -84,6 +84,32 @@ namespace PLL.Data.Dao.SqlDao
         return list;
     }
 
+    public List<TEntity> GetAll()
+    {
+        var list = new List<TEntity>();
+
+        var command = new SqlCommand(SelectAllRequest, _connection);
+
+        _logger.LogInformation("Executing Sql-Query: {0}", command.CommandText);
+
+        using (var reader = command.ExecuteReader())
+        {
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    list.Add(MapDataReaderToEntity(reader));
+                }
+            }
+        }
+
+        _state = DaoState.Get;
+
+        Notify();
+
+        return list;
+    }
+
     public async Task<TEntity?> GetByIdAsync(string id)
     {
         var list = new List<TEntity>();
@@ -191,7 +217,25 @@ namespace PLL.Data.Dao.SqlDao
         return list.FirstOrDefault();
         }
 
-    protected abstract TEntity MapDataReaderToEntity(SqlDataReader reader);
+    public async Task DeleteAllAsync(string tableName)
+    {
+        var request = new string($"Delete From [{tableName}]");
+
+        var command = new SqlCommand(request, _connection);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public void DeleteAll(string tableName)
+    {
+        var request = new string($"Delete From [{tableName}]");
+
+        var command = new SqlCommand(request, _connection);
+
+        command.ExecuteNonQuery();
+    }
+
+        protected abstract TEntity MapDataReaderToEntity(SqlDataReader reader);
     protected abstract SqlCommand ToSqlRequest(TEntity entity, string request);
     }
 

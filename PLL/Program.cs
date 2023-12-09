@@ -38,7 +38,7 @@ namespace PLL
 
             builder.Services.AddSingleton<IDaoAccessor>(provider =>
             {
-                var factory = new SqlDaoAccessFactory(provider.GetService<ILoggerFactory>(), provider.GetRequiredService<IObserver>());
+                var factory = new MongoDbDaoAccesFactory(provider.GetService<ILoggerFactory>());
                 
                 return factory.GetAccessor();
             });

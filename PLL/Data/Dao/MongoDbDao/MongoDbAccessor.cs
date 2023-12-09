@@ -2,9 +2,9 @@
 using PLL.Data.Entity;
 using PLL.Data.Observer.Interfaces;
 
-namespace PLL.Data.Dao.SqlDao
+namespace PLL.Data.Dao.MongoDbDao
 {
-    public class SqlDaoAccessor : IDaoAccessor
+    public class MongoDbAccessor : IDaoAccessor
     {
         private IDao<Training>? _trainingDao;
         private IDao<Exercise>? _exerciseDao;
@@ -14,13 +14,11 @@ namespace PLL.Data.Dao.SqlDao
         private IDao<Role>? _roleDao;
         private IDao<User>? _userDao;
 
-
         private readonly ILoggerFactory _loggerFactory;
 
-        public SqlDaoAccessor(ILoggerFactory loggerFactory)
+        public MongoDbAccessor(ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory;
-
         }
 
         public IDao<Training> TrainingDao
@@ -28,21 +26,19 @@ namespace PLL.Data.Dao.SqlDao
             get
             {
                 if (_trainingDao == null)
-                {
-                    _trainingDao = new TrainingDao(_loggerFactory.CreateLogger<TrainingDao>());
-                    
-                }
+                    return _trainingDao = new TrainingDao(_loggerFactory.CreateLogger<TrainingDao>());
 
                 return _trainingDao;
             }
+
         }
 
         public IDao<Exercise> ExerciseDao
         {
             get
             {
-                if(_exerciseDao == null)
-                    _exerciseDao = new ExerciseDao(_loggerFactory.CreateLogger<ExerciseDao>());
+                if (_exerciseDao == null)
+                    return _exerciseDao = new ExerciseDao(_loggerFactory.CreateLogger<ExerciseDao>());
 
                 return _exerciseDao;
             }
@@ -52,8 +48,8 @@ namespace PLL.Data.Dao.SqlDao
         {
             get
             {
-                if(_muscleGroupDao == null)
-                    _muscleGroupDao = new MuscleGroupDao(_loggerFactory.CreateLogger<MuscleGroupDao>());
+                if (_muscleGroupDao == null)
+                    return _muscleGroupDao = new MuscleGroupDao(_loggerFactory.CreateLogger<MuscleGroupDao>());
 
                 return _muscleGroupDao;
             }
@@ -63,8 +59,8 @@ namespace PLL.Data.Dao.SqlDao
         {
             get
             {
-                if(_setDao == null)
-                    _setDao = new SetDao(_loggerFactory.CreateLogger<SetDao>());
+                if (_setDao == null)
+                    return _setDao = new SetDao(_loggerFactory.CreateLogger<SetDao>());
 
                 return _setDao;
             }
@@ -74,7 +70,7 @@ namespace PLL.Data.Dao.SqlDao
         {
             get
             {
-                if(_unitDao == null)
+                if (_unitDao == null)
                     return _unitDao = new UnitDao(_loggerFactory.CreateLogger<UnitDao>());
 
                 return _unitDao;

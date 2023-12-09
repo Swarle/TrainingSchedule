@@ -30,6 +30,15 @@ namespace PLL.Data.Dao.MongoDbDao
             return list;
         }
 
+        public List<TEntity> GetAll()
+        {
+            var bsonList = _collection.Find(new BsonDocument()).ToList();
+
+            var list = MapFromBsonToEntities(bsonList);
+
+            return list;
+        }
+
         public async Task<TEntity?> GetByIdAsync(string id)
         {
             var bsonDoc = await _collection.Find(new BsonDocument{ {"_id", new ObjectId(id)} }).ToListAsync();
@@ -63,6 +72,20 @@ namespace PLL.Data.Dao.MongoDbDao
         public Task<TEntity?> FindSingle(ISpecification<TEntity> specification)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task DeleteAllAsync(string tableName)
+        {
+            var collection = MongoDbConnectionManager.Instance.GetDatabase().GetCollection<BsonDocument>(tableName);
+
+            await collection.DeleteManyAsync(new BsonDocument());
+        }
+
+        public void DeleteAll(string tableName)
+        {
+            var collection = MongoDbConnectionManager.Instance.GetDatabase().GetCollection<BsonDocument>(tableName);
+
+            collection.DeleteMany(new BsonDocument());
         }
 
         protected abstract List<TEntity> MapFromBsonToEntities(List<BsonDocument> bsonList);

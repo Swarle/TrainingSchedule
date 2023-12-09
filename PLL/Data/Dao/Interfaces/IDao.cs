@@ -11,5 +11,6 @@ namespace PLL.Data.Dao.Interfaces
         Task UpdateAsync(TEntity entity);
         Task DeleteAsync(string id);
         Task<TEntity?> FindSingle(ISpecification<TEntity> specification);
+        Task DeleteAllAsync(string tableName);
     }
 }

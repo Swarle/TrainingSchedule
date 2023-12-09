@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using PLL.Models;
 using System.Diagnostics;
+using Bogus;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using PLL.Data.Dao;
@@ -27,19 +28,38 @@ namespace PLL.Controllers
             _logger = logger;
             _accessor = accessor;
         }
-        //[HttpGet("test")]
-        //public async Task<ActionResult> Test()
-        //{
 
-        //}
-
-        //public async Task<ActionResult> CheckConStatus()
-        //{
-
-        //}
         [HttpGet("")]
         public IActionResult Index()
         {
+            var listRoles = new List<Role>
+            {
+                new Role
+                {
+                    RoleName = "Admin"
+                },
+                new Role
+                {
+                    RoleName = "User"
+                }
+            };
+
+            foreach (var role in listRoles)
+            {
+                _accessor.RoleDao.CreateAsync(role);
+            }
+
+            var faker = new Faker<User>()
+                .RuleSet("default", rule =>
+                {
+                    rule.RuleFor(u => u.Login, f => f.Internet.UserName());
+                    rule.RuleFor(u => u.Password, f => f.Internet.Password());
+                    rule.RuleFor(u => u.Email, f => f.Internet.Email());
+                    rule.RuleFor(u => u.Age, f => f.Random.Number(17, 67));
+                });
+
+            var fakeUsers = faker.Generate(20, "default");
+
             return View();
         }
 

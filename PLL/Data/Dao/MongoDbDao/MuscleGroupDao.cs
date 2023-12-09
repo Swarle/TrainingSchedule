@@ -35,7 +35,8 @@ namespace PLL.Data.Dao.MongoDbDao
         {
             return new BsonDocument
             {
-                { "group_name", new BsonString(entity.GroupName) }
+                { "group_name", new BsonString(entity.GroupName) },
+                {"training_id", new BsonObjectId(entity.TrainingId)}
             };
         }
     }
